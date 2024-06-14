@@ -1,2 +1,5 @@
 import pygame
-print("hello world")
+import settings
+
+pygame.init()
+
