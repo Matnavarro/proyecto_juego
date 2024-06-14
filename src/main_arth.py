@@ -20,6 +20,6 @@ while is_running:
         if event.type == pygame.QUIT: # pygame.QUIT = 256 numero del evento para cerrar (quit) | Todos los eventos tienen un valor numerico y aparecen como constant
             is_running = False
 
-    pygame.display.flip() # Voltea la pantall \ actualiza
+    pygame.display.flip() # Voltea la pantalla \ actualiza
 
 pygame.quit() # contrario a pygame.init() | Cierra el programa
