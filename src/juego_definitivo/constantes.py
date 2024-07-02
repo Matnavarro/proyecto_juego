@@ -1,0 +1,22 @@
+import pygame
+
+# Configuración de pantalla 
+WIDTH = 800
+HEIGHT = 600
+SCREEN_SIZE = (WIDTH, HEIGHT)
+SCREEN_CENTER = (WIDTH // 2, HEIGHT // 2)
+FPS = 60
+
+# Colores
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+MAGENTA = (225, 0, 255)
+YELLOW = (255, 255, 0)
+CYAN = (0, 255, 255)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+CUSTOM = (157, 208, 230)
+
+SPEED = 10
+PROJECTILE_SPEED = 5
