@@ -26,6 +26,7 @@ proyectiles_rl = []#create_proyectile(0, HEIGHT // 2)c
 proyectiles_tb = []#create_proyectile(0, HEIGHT // 2)c
 proyectiles_bt = []#create_proyectile(0, HEIGHT // 2)c
 
+imagen_fondo = pygame.image.load("./src/assets/bgndd.jpg")
 imagen_proyectil = pygame.image.load("./src/assets/asteroide2.png")
 #magen_jugador = pygame.image.load("./src/assets/bgnd.jpg")
 #imagen_objeto = 
@@ -36,7 +37,9 @@ is_running = True
 while is_running:
     clock.tick(FPS)
 
-    screen.fill(BLACK)
+    # screen.fill(BLACK)
+    imagen_fondo = pygame.transform.scale(imagen_fondo, (WIDTH, HEIGHT))
+    screen.blit(imagen_fondo, (0,0))
 
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
@@ -111,15 +114,13 @@ while is_running:
             proyectiles_bt.remove(proyectil)
 
     if detectar_colision(jugador["rect"], objeto["rect"]):
-        #objeto = None
         print("Colision!!!!")
         objeto = create_collectable()
 
-
-    screen.blit(objeto["img"], objeto["rect"])
-    #pygame.draw.rect(screen, objeto["color"], objeto["rect"], objeto["borde"], objeto["radio"])
-    screen.blit(jugador["img"], jugador["rect"])
-    #pygame.draw.rect(screen, jugador["color"], jugador["rect"], jugador["borde"], jugador["radio"])
+    #screen.blit(objeto["img"], objeto["rect"])
+    pygame.draw.rect(screen, objeto["color"], objeto["rect"], objeto["borde"], objeto["radio"])
+    #screen.blit(jugador["img"], jugador["rect"])
+    pygame.draw.rect(screen, jugador["color"], jugador["rect"], jugador["borde"], jugador["radio"])
 
 
 
