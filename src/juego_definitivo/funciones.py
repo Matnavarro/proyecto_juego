@@ -108,7 +108,13 @@ def punto_en_rectangulo(punto, rect):
     x, y = punto
     return x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom
 
-
+def wait_user(tecla) :
+    continuar = True
+    while continuar :
+        for evento in pygame.event.get() :
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == tecla:
+                    continuar = False
 
 
 

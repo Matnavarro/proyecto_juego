@@ -122,12 +122,6 @@ while is_running:
     #screen.blit(jugador["img"], jugador["rect"])
     pygame.draw.rect(screen, jugador["color"], jugador["rect"], jugador["borde"], jugador["radio"])
 
-
-
-
-
-
-
     pygame.display.flip()
 
 pygame.quit() 
