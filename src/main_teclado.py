@@ -24,10 +24,10 @@ NEWCOINEVENT = pygame.USEREVENT + 1
 screen = pygame.display.set_mode(SCREEN_SIZE)
 pygame.display.set_caption("Primer Jueguito")
 
-colission_sound = pygame.mixer.Sound("./src/assets/coin.mp3")
+colission_sound = pygame.mixer.Sound("./src/assets/sounds/coin.mp3")
 
-imagen_ovni = pygame.image.load("./src/assets/ovni.png")
-imagen_fondo = pygame.image.load("./src/assets/fondo.jpg")
+imagen_ovni = pygame.image.load("./src/assets/images/ovni.png")
+imagen_fondo = pygame.image.load("./src/assets/images/fondo.jpg")
 
 # Configuro la fuente para el texto
 fuente = pygame.font.SysFont(None, 48, False, True)
