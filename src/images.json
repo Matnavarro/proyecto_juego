@@ -1,0 +1,13 @@
+{
+    "menu_juego": "src/assets/images/menu_jgo.jpg",
+    "pausa": "src/assets/images/pausa_fondo.jpg",
+    "fondo": "src/assets/images/bgndd.jpg",
+    "proyectil": "src/assets/images/asteroide2.png",
+    "proyectil2": "src/assets/images/asteroide.png",
+    "objeto": "src/assets/images/verdes.png",
+    "bomba": "src/assets/images/bomba3.png",
+    "vida": "src/assets/images/corazon.png",
+    "player": "src/assets/images/cuadradito.png"
+
+  }
+  

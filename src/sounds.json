@@ -1,0 +1,7 @@
+{
+    "score": "src/assets/sounds/point.mp3",
+    "damage": "src/assets/sounds/impacto.mp3",
+    "game_over": "src/assets/sounds/game_over_2.mp3",
+    "bomba": "src/assets/sounds/coin.mp3"
+  }
+  

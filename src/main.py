@@ -1,103 +1,164 @@
-import pygame
-from settings import * # Cosas para los settings 
+from constantes import * 
+from funciones import *
+from ajustes import *
 
-# import sys (no le gusta al profe)
-# sys.exit() # escapar del programa
+pygame.init()
 
-pygame.init() # Inicia todos los modulos (.display, .mixer, etc )
+vidas = VIDAS
+score = 0
+highscore = read_highscore()
+inmunidad = False
+timer_inmunidad = 0
+duracion_inmunidad = 1000
+inmunidad_cooldown = 2000
+ultima_inmunidad = 0
 
-SCREEN = pygame.display.set_mode(SCREEN_SIZE) #crear la pantalla (800 ancho, 600 de alto)
-pygame.display.set_allow_screensaver("Mi primer juego") # Cambiar titulo
-
-pygame.display.set_caption("cuadradito") # Cambiar titulo
-
-clock = pygame.time.Clock() # Crea un reloj
-
-#rect_1 = pygame.rect.Rect() # cualquiera sirve, conviene la otra
-rect_1 = pygame.Rect(300, 400, 50, 80) # objeto rectangulo x e y de donde empieza, el ancho y el alto
-rect_1 = pygame.Rect((ANCHO - 200)//2, (ALTO - 100)//2, 50, 50) # objeto rectangulo x e y de donde empieza, el ancho y el alto
-
-#pygame.color.THECOLORS ### (?)
-# for color in pygame.color.THECOLORS.keys():
-#     print(color)
-
-speed = 10
-bajar = True
-left = True
-is_running = True # bandera para decir que esta andando el progragama
 while is_running:
+    tiempo_actual = pygame.time.get_ticks()
+    clock.tick(FPS)
+    texto = fuente.render(f"Score: {score}", True, MAGENTA)
 
-    clock.tick(FPS) #va frenando el while para que dure lo mismo | Son los FPS
+    if menu:
+        menu_principal(imagen_menu)
+        menu = False
+        jugador = create_player(imagen = imagen_jugador)
+        objeto = create_collectable(imagen_objeto)
+        bomba = create_collectable(imagen_bomba)
 
-    # analizamos elementos
-    for event in pygame.event.get(): # pygame.event.get() Devuelve una lista de los eventos que ocurrieron
-        if event.type == pygame.QUIT: # pygame.QUIT = 256 numero del evento para cerrar (quit) | Todos los eventos tienen un valor numerico y aparecen como constant
+
+    screen.fill(CYAN)
+    #screen.blit(imagen_fondo, (0,0))
+
+    for evento in pygame.event.get():
+
+        if evento.type == pygame.QUIT:
             is_running = False
 
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_LEFT:
+                print("izq")
+                move_left = True
+                move_right = False
+                # move_down = False
+                # move_up = False
+                proyectiles_lr.append(create_projectile(0, jugador["rect"].centery, imagen_proyectil))
 
-    # actualizamos elementos
-    if bajar:
-        if rect_1.bottom <= ALTO:
-            rect_1.y += speed
+            if evento.key == pygame.K_RIGHT:
+                print("der")
+                move_right = True
+                move_left = False
+                # move_down = False
+                # move_up = False
+                proyectiles_rl.append(create_projectile(WIDTH, jugador["rect"].centery, imagen_proyectil))
 
-        else:
-            bajar = False
+            if evento.key == pygame.K_UP:
+                print("arriba")
+                move_up = True
+                move_down = False
+                # move_left = False
+                # move_right = False
+                proyectiles_tb.append(create_projectile(jugador["rect"].centerx, 0, imagen_proyectil))
+
+            if evento.key == pygame.K_DOWN:
+                print("abajo")
+                move_down = True
+                move_up = False
+                # move_left = False
+                # move_right = False
+                proyectiles_bt.append(create_projectile(jugador["rect"].centerx, HEIGHT, imagen_proyectil))
+
+            if evento.key == pygame.K_SPACE:
+                #inmunidad = True
+                if not inmunidad and pygame.time.get_ticks() - ultima_inmunidad > inmunidad_cooldown:
+                    inmunidad = True
+                    timer_inmunidad = tiempo_actual
+                    ultima_inmunidad = tiempo_actual
+
+            if evento.key == pygame.K_p:
+                pausa(pygame.K_p, imagen_pausa)
+                move_left = False
+                move_right = False
+                move_up = False
+                move_down = False
+                print("pausa jeje")
+
+        if evento.type == pygame.KEYUP:
+            if evento.key == pygame.K_LEFT:
+                move_left = False
+            if evento.key == pygame.K_RIGHT:
+                move_right = False
+            if evento.key == pygame.K_UP:
+                move_up = False
+            if evento.key == pygame.K_DOWN:
+                move_down = False
+
+        if evento.type == NEW_PROJECTILE_EVENT:
+            create_random_projectile(proyectiles_lr, proyectiles_rl, proyectiles_tb, proyectiles_bt, imagen_proyectil2)
+        
+        if evento.type == NEW_BOMB_EVENT:
+            if bomb_timer:
+                bomba = create_collectable(imagen_bomba)
+                bomb_timer = False
+            print(bomba)
+
+    move_player(jugador["rect"], move_left, move_right, move_up, move_down)
+
+#-------------------------------------------------------------------------------------
+    for proyectil in proyectiles_lr[:]:
+        move_proyectil_lr(proyectil, proyectiles_lr)
+        vidas = damage(jugador, proyectil, proyectiles_lr, vidas, sonido_damage, inmunidad)          
+
+    for proyectil in proyectiles_rl[:]:
+        move_proyectil_rl(proyectil, proyectiles_rl)
+        vidas = damage(jugador, proyectil, proyectiles_rl, vidas, sonido_damage, inmunidad)          
+
+    for proyectil in proyectiles_tb[:]:
+        move_proyectil_tb(proyectil, proyectiles_tb)
+        vidas = damage(jugador, proyectil, proyectiles_tb, vidas, sonido_damage, inmunidad)          
+
+    for proyectil in proyectiles_bt[:]:
+        move_proyectil_bt(proyectil, proyectiles_bt)   
+        vidas = damage(jugador, proyectil, proyectiles_bt, vidas, sonido_damage, inmunidad)
+#-------------------------------------------------------------------------------------
+
+    if detectar_colision(jugador["rect"], objeto["rect"]):
+        print("OBJETO")
+        objeto = create_collectable(imagen_objeto)
+        score +=1
+        sonido_score.play()
+
+    if detectar_colision(jugador["rect"], bomba["rect"]):
+        print("BOMBA")
+        sonido_bomba.play()
+        bomba["rect"].x = WIDTH + 200
+        delete_all_projectiles(proyectiles_lr, proyectiles_rl, proyectiles_tb, proyectiles_bt)
+        bomb_timer = True
+
+    screen.blit(objeto["img"], objeto["rect"])
+    screen.blit(bomba["img"], bomba["rect"])
+
+    if inmunidad:
+        if (tiempo_actual - timer_inmunidad) > duracion_inmunidad:
+            inmunidad = False
+        pygame.draw.rect(screen, jugador["color"], jugador["rect"])
     else:
-        if rect_1.top >= 0:
-           rect_1.y -= speed        
-        else:
-            bajar = True
-
-    if left:
-        if rect_1.right <= ANCHO:
-            rect_1.x += speed
-        else:
-            left = False
+        screen.blit(jugador["img"], jugador["rect"])
+    screen.blit(texto,(0,0))
+    
+    if vidas > 0:
+        dibujar_vidas(vidas, imagen_vida)
     else:
-        if rect_1.left >= 0:
-           rect_1.x -= speed        
-        else:
-            left = True
+        menu = game_over(score, highscore, sonido = sonido_gameover)
+        delete_all_projectiles(proyectiles_lr, proyectiles_rl, proyectiles_tb, proyectiles_bt)
+        save_highscore(highscore)
+        score = 0
+        vidas = VIDAS
+        move_left = False
+        move_right = False
+        move_up = False
+        move_down = False
+        jugador["rect"].center = SCREEN_CENTER
 
+    pygame.display.flip()
 
-    # dibujamos en pantalla
-                                                #pygame.draw.rect(SCREEN, RED, (0, 0, 200, 100)) # se pasa la pantalla y el rectangulo
-    SCREEN.fill(CUSTOM) # Cambiar color de la pantalla .fill((red, green, blue)) maximo de valor de color es 255
-    pygame.draw.rect(SCREEN, RED, rect_1)
-
-
-    # actualizamos pantalla
-    #pygame.display.update()
-    pygame.display.flip() # Voltea la pantalla \ actualiza
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # pygame.draw.rect(SCREEN, BLUE, rect_1)
-    # rect_3 = pygame.draw.circle(SCREEN, MAGENTA, SCREEN_CENTER, 75, 5) # tamaño circulo, el 5 es opcional, para que haga circunferencia de esos pixeles
-    # pygame.draw.rect(SCREEN, BLUE, rect_3, 5) # dibujo rectangulo del tamaño del circulo
-    # rect_2 = pygame.draw.ellipse(SCREEN, RED, (0, 0, 200, 100))
-    # pygame.draw.rect(SCREEN, YELLOW, rect_2, 5) # se pasa la pantalla y el rectangulo
-    # rect_4 = pygame.draw.line(SCREEN, BLACK, rect_2.center, rect_3.center, 3)
-    # pygame.draw.rect(SCREEN, WHITE, rect_4, 3)
-    # rect_5 = pygame.draw.polygon(SCREEN, BLUE, [(50, 50), (400, 300), (300, 500)], 3)
-    # pygame.draw.rect(SCREEN, BLACK, rect_5, 3)
-    
-
-
-
-pygame.quit() # contrario a pygame.init() | Cierra el programa
+terminar()
