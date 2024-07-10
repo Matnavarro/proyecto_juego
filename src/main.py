@@ -150,7 +150,8 @@ while is_running:
     else:
         menu = game_over(score, highscore, sonido = sonido_gameover)
         delete_all_projectiles(proyectiles_lr, proyectiles_rl, proyectiles_tb, proyectiles_bt)
-        save_highscore(highscore)
+        highscore = read_highscore()
+        #save_highscore(highscore)
         score = 0
         vidas = VIDAS
         move_left = False

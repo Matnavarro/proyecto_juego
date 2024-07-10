@@ -97,6 +97,13 @@ def menu_principal(imagen:pygame.surface = None):
     texto_rect_jugar = (boton_jugar["rect"].x + ((boton_jugar["rect"].width - texto_rect_jugar.width) // 2), boton_jugar["rect"].y + ((boton_jugar["rect"].height - texto_rect_jugar.height) // 2))
     screen.blit(texto_jugar, texto_rect_jugar)
 
+    texto_highscore = fuente.render("Highscore", True, BLACK) 
+    boton_highscore = create_block(boton_jugar["rect"].x, boton_jugar["rect"].y + 100, button_w, button_h, color = RED)
+    pygame.draw.rect(screen, boton_highscore["color"], boton_highscore["rect"])
+    texto_rect_highscore = texto_jugar.get_rect()
+    texto_rect_highscore = (boton_highscore["rect"].x - 20 + ((boton_highscore["rect"].width - texto_rect_highscore.width) // 2), boton_highscore["rect"].y + 5 + ((boton_highscore["rect"].height - texto_rect_highscore.height) // 2))
+    screen.blit(texto_highscore, texto_rect_highscore)
+
     continuar = True
     while continuar:
         for evento in pygame.event.get():
@@ -107,6 +114,11 @@ def menu_principal(imagen:pygame.surface = None):
                     if punto_en_rectangulo(evento.pos, boton_jugar["rect"]):
                         continuar = False
 
+                    if punto_en_rectangulo(evento.pos, boton_highscore["rect"]):
+                        screen_highscore()
+                        menu_principal(imagen)
+                        continuar = False
+                        
         pygame.display.flip()
 
 def game_over(score:int, highscore:int = 0, imagen:pygame.surface = None, sonido:pygame.mixer = None)->bool:
@@ -236,19 +248,33 @@ def read_highscore()->int:
 
     return valor
 
+def screen_highscore():
+    highscore = read_highscore()
+
+    while True:
+
+        screen.fill(BLACK)
+
+        texto_highscore = fuente.render(f"Highscore: {highscore}", True, GREEN)
+        texto_rect_highscore = texto_highscore.get_rect()
+        texto_rect_highscore.center = (WIDTH // 2, HEIGHT // 4)
+        screen.blit(texto_highscore, texto_rect_highscore)
+
+        texto_volver = fuente.render(f"Volver", True, WHITE)
+        texto_rect_volver = texto_volver.get_rect()
+        texto_rect_volver.center = (WIDTH // 2, HEIGHT // 2)
+        screen.blit(texto_volver, texto_rect_volver)
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                terminar()
+
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if punto_en_rectangulo(evento.pos, texto_rect_volver):
+                        return True
+                    
+        pygame.display.flip()
 
 
 
-
-
-
-
-
-
-
-    # texto_highscore = fuente.render("Highscore", True, BLACK) 
-    # boton_highscore = create_block(boton_jugar["rect"].x, boton_jugar["rect"].y + 100, button_w, button_h, color = RED)
-    # pygame.draw.rect(screen, boton_highscore["color"], boton_highscore["rect"])
-    # texto_rect_highscore = texto_jugar.get_rect()
-    # texto_rect_highscore = (boton_highscore["rect"].x - 20 + ((boton_highscore["rect"].width - texto_rect_highscore.width) // 2), boton_highscore["rect"].y + 5 + ((boton_highscore["rect"].height - texto_rect_highscore.height) // 2))
-    # screen.blit(texto_highscore, texto_rect_highscore)
