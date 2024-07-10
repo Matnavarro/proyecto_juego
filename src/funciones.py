@@ -232,6 +232,7 @@ def read_highscore()->int:
     except FileNotFoundError:
         with open("src/Highscore.txt", "w") as file:
             file.write("0")
+            valor = 0
 
     return valor
 
