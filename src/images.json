@@ -7,7 +7,8 @@
     "objeto": "src/assets/images/verdes.png",
     "bomba": "src/assets/images/bomba3.png",
     "vida": "src/assets/images/corazon.png",
-    "player": "src/assets/images/cuadradito.png"
+    "player": "src/assets/images/cuadradito.png",
+    "ranking": "src/assets/images/fondo_ranking.jpg"
 
   }
   

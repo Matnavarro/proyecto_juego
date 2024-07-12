@@ -160,6 +160,7 @@ while is_running:
         move_down = False
         jugador["rect"].center = SCREEN_CENTER
 
+
     pygame.display.flip()
 
 terminar()

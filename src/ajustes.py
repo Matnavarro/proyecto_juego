@@ -20,6 +20,7 @@ with open("src/images.json", "r") as file:
 imagen_menu = pygame.image.load(imagenes_recursos["menu_juego"])
 imagen_pausa = pygame.image.load(imagenes_recursos["pausa"])
 imagen_fondo = pygame.image.load(imagenes_recursos["fondo"])
+imagen_ranking = pygame.image.load(imagenes_recursos["ranking"])
 imagen_proyectil = pygame.image.load(imagenes_recursos["proyectil"])
 imagen_proyectil2 = pygame.image.load(imagenes_recursos["proyectil2"])
 imagen_objeto = pygame.image.load(imagenes_recursos["objeto"])
@@ -27,9 +28,10 @@ imagen_bomba = pygame.image.load(imagenes_recursos["bomba"])
 imagen_vida = pygame.image.load(imagenes_recursos["vida"])
 imagen_jugador = pygame.image.load(imagenes_recursos["player"])
 
-imagen_fondo = pygame.transform.scale(imagen_fondo, (WIDTH, HEIGHT))
-imagen_menu = pygame.transform.scale(imagen_menu, (WIDTH, HEIGHT))
-imagen_pausa = pygame.transform.scale(imagen_pausa, (WIDTH, HEIGHT))
+imagen_fondo = pygame.transform.scale(imagen_fondo, SCREEN_SIZE)
+imagen_menu = pygame.transform.scale(imagen_menu, SCREEN_SIZE)
+imagen_pausa = pygame.transform.scale(imagen_pausa, SCREEN_SIZE)
+imagen_ranking = pygame.transform.scale(imagen_ranking, SCREEN_SIZE)
 imagen_vida = pygame.transform.scale(imagen_vida, (30, 30))
 
 with open("src/sounds.json", "r") as file:

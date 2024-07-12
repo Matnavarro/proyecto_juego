@@ -23,7 +23,7 @@ SPEED = 7
 PROJECTILE_SPEED = 5
 
 # Vidas
-VIDAS = 5
+VIDAS = 1
 
 # Eventos
 NEW_PROJECTILE_EVENT = pygame.USEREVENT + 1

@@ -91,18 +91,25 @@ def menu_principal(imagen:pygame.surface = None):
 
 
     texto_jugar = fuente.render("Jugar", True, BLACK) 
-    boton_jugar = create_block((WIDTH // 2) - 100, (HEIGHT // 2) - 25, button_w, button_h, color = MAGENTA)
+    boton_jugar = create_block((WIDTH // 2) - 100, (HEIGHT // 2) - 100, button_w, button_h, color = MAGENTA)
     pygame.draw.rect(screen, boton_jugar["color"], boton_jugar["rect"])
     texto_rect_jugar = texto_jugar.get_rect()
     texto_rect_jugar = (boton_jugar["rect"].x + ((boton_jugar["rect"].width - texto_rect_jugar.width) // 2), boton_jugar["rect"].y + ((boton_jugar["rect"].height - texto_rect_jugar.height) // 2))
     screen.blit(texto_jugar, texto_rect_jugar)
 
-    texto_highscore = fuente.render("Highscore", True, BLACK) 
-    boton_highscore = create_block(boton_jugar["rect"].x, boton_jugar["rect"].y + 100, button_w, button_h, color = RED)
-    pygame.draw.rect(screen, boton_highscore["color"], boton_highscore["rect"])
-    texto_rect_highscore = texto_jugar.get_rect()
-    texto_rect_highscore = (boton_highscore["rect"].x - 20 + ((boton_highscore["rect"].width - texto_rect_highscore.width) // 2), boton_highscore["rect"].y + 5 + ((boton_highscore["rect"].height - texto_rect_highscore.height) // 2))
-    screen.blit(texto_highscore, texto_rect_highscore)
+    texto_ranking = fuente.render("Highscore", True, BLACK) 
+    boton_ranking = create_block(boton_jugar["rect"].x, boton_jugar["rect"].y + 100, button_w, button_h, color = RED)
+    pygame.draw.rect(screen, boton_ranking["color"], boton_ranking["rect"])
+    texto_rect_ranking = texto_jugar.get_rect()
+    texto_rect_ranking = (boton_ranking["rect"].x - 20 + ((boton_ranking["rect"].width - texto_rect_ranking.width) // 2), boton_ranking["rect"].y + 5 + ((boton_ranking["rect"].height - texto_rect_ranking.height) // 2))
+    screen.blit(texto_ranking, texto_rect_ranking)
+
+    texto_salir = fuente.render("Salir", True, BLACK) 
+    boton_salir = create_block(boton_jugar["rect"].x, boton_jugar["rect"].y + 200, button_w, button_h, color = RED)
+    pygame.draw.rect(screen, boton_salir["color"], boton_salir["rect"])
+    texto_rect_salir = texto_salir.get_rect()
+    texto_rect_salir = (boton_salir["rect"].x + ((boton_salir["rect"].width - texto_rect_salir.width) // 2), boton_salir["rect"].y + ((boton_salir["rect"].height - texto_rect_salir.height) // 2))
+    screen.blit(texto_salir, texto_rect_salir)
 
     continuar = True
     while continuar:
@@ -114,12 +121,35 @@ def menu_principal(imagen:pygame.surface = None):
                     if punto_en_rectangulo(evento.pos, boton_jugar["rect"]):
                         continuar = False
 
-                    if punto_en_rectangulo(evento.pos, boton_highscore["rect"]):
-                        screen_highscore()
+                    if punto_en_rectangulo(evento.pos, boton_ranking["rect"]):
+                        screen_ranking()
                         menu_principal(imagen)
                         continuar = False
+
+                    if punto_en_rectangulo(evento.pos, boton_salir["rect"]):
+                        terminar()
                         
         pygame.display.flip()
+
+
+def ordenar_descendente(lista:list, key:list)->None:
+    """ordena la lista de diccionarios de mayor a menos segun la clave
+
+    Args:
+        lista (list): _description_
+        key (list): _description_
+    """
+
+    largo_lista = len(lista)
+    #print(lista_datos)
+    
+    for i in range(largo_lista-1):
+        for j in range(i+1, largo_lista):
+            if lista[i][key] < lista[j][key]:
+                aux = lista[i]
+                lista[i] = lista[j]
+                lista[j] = aux
+
 
 def game_over(score:int, highscore:int = 0, imagen:pygame.surface = None, sonido:pygame.mixer = None)->bool:
     """ Muestra la pantalla de Game Over con opciones para reiniciar o volver al inicio.
@@ -144,6 +174,11 @@ def game_over(score:int, highscore:int = 0, imagen:pygame.surface = None, sonido
     if highscore < score:
         highscore = score
         save_highscore(highscore)
+        ordenar_ranking()
+    else:
+        save_highscore(score)
+        ordenar_ranking()
+
 
     boton_width = 200
     boton_height = 50
@@ -219,14 +254,22 @@ def create_random_projectile(proyectiles_lr:list, proyectiles_rl:list, proyectil
     elif selector == 3:
         proyectiles_bt.append(create_projectile(randint(0,WIDTH), HEIGHT, imagen, color = RED))
 
+
+def save_ranking(lista:list, encabezado:str):
+    
+    with open("src/Highscore.csv", "w") as file:
+        file.write(f"{encabezado["score"]},{encabezado["nombre"]}\n")
+        for linea in lista:
+            file.write(f"{linea["score"]},{linea["nombre"]}\n")
+
 def save_highscore(valor:int):
     """Crea un archivo con el score mas alto
 
     Args:
         valor (int): Valor a guardar
     """
-    with open("src/Highscore.txt", "w") as file:
-        file.write(f"{valor}")
+    with open("src/Highscore.csv", "a") as file:
+        file.write(f"{valor},{input("Ingrese su nombre: ")}\n")
 
 def read_highscore()->int:
     """Lee desde un archivo el record y lo devuelve
@@ -235,34 +278,70 @@ def read_highscore()->int:
         int: highscore
     """
     try:
-        with open("src/Highscore.txt", "r") as file:
-            valor = int(file.readline())
+        with open("src/Highscore.csv", "r") as file:
+            file.readline()
+            linea_ranking = file.readline()
+            linea_ranking = linea_ranking.strip("\n").split(",")
+            valor = int(linea_ranking[0])
 
     except ValueError:
         valor = 0
 
     except FileNotFoundError:
-        with open("src/Highscore.txt", "w") as file:
-            file.write("0")
+        with open("src/Highscore.csv", "w") as file:
+            file.write("Score,Nombre\n")
             valor = 0
 
     return valor
 
-def screen_highscore():
-    highscore = read_highscore()
+def read_ranking()->list:
+
+    with open("src/Highscore.csv", "r") as file:
+        # encabezado = file.readline()
+        # linea_ranking = linea_ranking.strip("\n").split(",")
+        contenido = file.readlines()
+        
+    lista_datos = []
+
+    for elemento in contenido:
+        diccionario = {}
+
+        linea = elemento.strip("\n").split(",")
+
+        diccionario["score"] =  linea[0]
+        diccionario["nombre"] = linea[1]
+
+        lista_datos.append(diccionario)
+    return lista_datos
+
+def ordenar_ranking():
+    ranking = read_ranking()
+    encabezado = ranking.pop(0)
+    ordenar_descendente(ranking, "score")
+    save_ranking(ranking, encabezado)
+    ranking.insert(0, encabezado)
+
+    return ranking
+
+def screen_ranking():
+
+    ranking = ordenar_ranking()
+    print(ranking)
 
     while True:
 
         screen.fill(BLACK)
 
-        texto_highscore = fuente.render(f"Highscore: {highscore}", True, GREEN)
-        texto_rect_highscore = texto_highscore.get_rect()
-        texto_rect_highscore.center = (WIDTH // 2, HEIGHT // 4)
-        screen.blit(texto_highscore, texto_rect_highscore)
+        for linea in range(len(ranking)):
 
-        texto_volver = fuente.render(f"Volver", True, WHITE)
+            texto_ranking = fuente.render(f"{ranking[linea]["score"]}    {ranking[linea]["nombre"]}", True, GREEN)
+            texto_rect_ranking = texto_ranking.get_rect()
+            texto_rect_ranking.center = (WIDTH // 2, (HEIGHT // 4) + linea * 30)
+            screen.blit(texto_ranking, texto_rect_ranking)
+
+        texto_volver = fuente.render(f"Volver", True, RED)
         texto_rect_volver = texto_volver.get_rect()
-        texto_rect_volver.center = (WIDTH // 2, HEIGHT // 2)
+        texto_rect_volver.center = (WIDTH // 2, HEIGHT - 150)
         screen.blit(texto_volver, texto_rect_volver)
 
         for evento in pygame.event.get():
