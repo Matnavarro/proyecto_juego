@@ -256,6 +256,12 @@ def create_random_projectile(proyectiles_lr:list, proyectiles_rl:list, proyectil
 
 
 def save_ranking(lista:list, encabezado:str):
+    """guarda el ranking en un archivo csv
+
+    Args:
+        lista (list): lista de diccionarios
+        encabezado (str): lista del encabezado
+    """
     
     with open("src/Highscore.csv", "w") as file:
         file.write(f"{encabezado["score"]},{encabezado["nombre"]}\n")
@@ -269,7 +275,7 @@ def save_highscore(valor:int):
         valor (int): Valor a guardar
     """
     with open("src/Highscore.csv", "a") as file:
-        file.write(f"{valor},{input("Ingrese su nombre: ")}\n")
+        file.write(f"{valor},.\n") # input("Ingrese su nombre: ")
 
 def read_highscore()->int:
     """Lee desde un archivo el record y lo devuelve
@@ -295,6 +301,11 @@ def read_highscore()->int:
     return valor
 
 def read_ranking()->list:
+    """lee el ranking
+
+    Returns:
+        list: lista de diccionarios
+    """
 
     with open("src/Highscore.csv", "r") as file:
         # encabezado = file.readline()
@@ -314,7 +325,12 @@ def read_ranking()->list:
         lista_datos.append(diccionario)
     return lista_datos
 
-def ordenar_ranking():
+def ordenar_ranking()->list:
+    """Ordena el ranking
+
+    Returns:
+        _type_: lista de diccionarios ordenada de mayor a menos por score
+    """
     ranking = read_ranking()
     encabezado = ranking.pop(0)
     ordenar_descendente(ranking, "score")
@@ -324,6 +340,11 @@ def ordenar_ranking():
     return ranking
 
 def screen_ranking():
+    """Pantalla de ranking
+
+    Returns:
+        Bool: retorna True
+    """
 
     ranking = ordenar_ranking()
     print(ranking)
